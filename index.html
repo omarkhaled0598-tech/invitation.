@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omar & Wafaa Invitation</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cairo:wght@400;600;700&family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        burgundy: {
+                            DEFAULT: '#610B27',
+                            dark: '#45061A',
+                            light: '#7A0E32',
+                            deep: '#3B0415'
+                        },
+                        cream: '#FDFBF7',
+                        gold: '#D4AF37',
+                        goldLight: '#F3E5AB'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        cinzel: ['Cinzel', 'serif'],
+                        script: ['Alex Brush', 'cursive'],
+                        sans: ['Montserrat', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        html { scroll-behavior: smooth; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.4); border-radius: 4px; }
+
+        .envelope-flap { clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%); }
+        .envelope-top-flap {
+            clip-path: polygon(0 0, 50% 55%, 100% 0);
+            transform-origin: top center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes sealPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(186, 24, 27, 0.6); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(212, 175, 55, 0.8); }
+        }
+        .wax-seal-pulse { animation: sealPulse 2.5s infinite ease-in-out; }
+
+        .gold-border {
+            border: 1px solid transparent;
+            background-image: linear-gradient(#610B27, #610B27), linear-gradient(135deg, #d4af37, #f3e5ab, #aa7c11);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .accordion-content.open { max-height: 250px; opacity: 1; }
+
+        #toast {
+            transform: translateY(100px);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        .polaroid-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5); }
+    </style>
+</head>
+<body class="bg-zinc-950 text-cream font-sans min-h-screen flex items-center justify-center p-0 md:p-4 select-none">
+
+    <div class="relative w-full max-w-[430px] h-[100vh] md:h-[880px] bg-burgundy rounded-0 md:rounded-[48px] shadow-2xl overflow-hidden border-0 md:border-[10px] border-zinc-800 flex flex-col">
+        
+        <!-- Mobile Dynamic Island -->
+        <div class="hidden md:flex absolute top-0 inset-x-0 h-7 z-50 justify-center items-center pointer-events-none">
+            <div class="w-28 h-4 bg-black rounded-full flex items-center justify-end px-2 gap-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-zinc-900 border border-zinc-800"></div>
+                <div class="w-2 h-2 rounded-full bg-blue-900/40"></div>
+            </div>
+        </div>
+
+        <!-- Sticky Controls -->
+        <div id="floating-controls" class="absolute top-4 inset-x-4 z-40 flex justify-between items-center opacity-0 transition-opacity duration-700 pointer-events-none">
+            <button onclick="toggleLanguage()" class="bg-black/40 backdrop-blur-md border border-gold/40 rounded-full px-3.5 py-1.5 text-[11px] font-cinzel text-gold flex items-center gap-1.5 shadow-lg hover:scale-105 transition-transform pointer-events-auto cursor-pointer">
+                <i class="fa-solid fa-globe text-xs"></i>
+                <span id="lang-btn-text">العربية</span>
+            </button>
+            
+            <button id="music-toggle-btn" onclick="toggleAudio()" class="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md border border-gold/40 flex items-center justify-center text-gold shadow-lg hover:scale-105 transition-transform pointer-events-auto cursor-pointer">
+                <i id="music-icon" class="fa-solid fa-music text-xs"></i>
+            </button>
+        </div>
+
+        <!-- ENVELOPE SCREEN -->
+        <div id="envelope-screen" class="absolute inset-0 bg-[#EFE8DF] z-50 flex flex-col justify-between items-center p-6 text-zinc-800 transition-all duration-1000">
+            <div class="pt-8 text-center">
+                <p id="env-sub" class="font-serif italic text-zinc-600 text-sm md:text-base leading-relaxed px-4" data-i18n="env_sub">
+                    Your guests won't just open the invitation,<br>they'll experience it 🥹💍
+                </p>
+            </div>
+
+            <div class="relative w-full max-w-[320px] h-[240px] my-auto">
+                <div class="absolute inset-0 bg-[#D8C9B9] rounded-lg shadow-xl border border-amber-950/10"></div>
+                
+                <div id="inner-card-peek" class="absolute inset-x-3 bottom-3 top-6 bg-burgundy rounded flex flex-col items-center justify-center p-4 text-center transition-transform duration-700">
+                    <p class="font-cinzel text-xs text-gold tracking-widest uppercase" data-i18n="wedding">Wedding</p>
+                    <p class="font-script text-3xl text-cream my-1">Omar & Wafaa</p>
+                    <p class="font-sans text-[9px] text-cream/70 tracking-widest">December 18, 2026</p>
+                </div>
+
+                <div class="absolute inset-0 bg-[#E6DACB] rounded-lg envelope-flap shadow-md border-t border-white/60 pointer-events-none"></div>
+                <div id="top-flap" class="absolute inset-x-0 top-0 h-[120px] bg-[#DFCFC0] rounded-t-lg envelope-top-flap shadow-md border-b border-black/5"></div>
+
+                <div class="absolute inset-0 flex items-center justify-center z-20">
+                    <button onclick="openEnvelope()" class="wax-seal-pulse group relative w-20 h-20 rounded-full bg-gradient-to-br from-red-700 via-burgundy-dark to-red-950 border-2 border-red-900/60 shadow-2xl flex items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-110 active:scale-95">
+                        <div class="absolute inset-1 rounded-full border border-gold/40 opacity-80"></div>
+                        <div class="w-10 h-10 rounded-full bg-red-800/80 border border-red-500/30 flex items-center justify-center shadow-inner">
+                            <i class="fa-solid fa-heart text-gold text-lg group-hover:scale-110 transition-transform"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pb-6 text-center">
+                <p class="font-cinzel text-[11px] tracking-[0.25em] text-zinc-500 uppercase flex items-center justify-center gap-2">
+                    <span class="w-6 h-[1px] bg-zinc-300"></span>
+                    <span data-i18n="env_tap">TAP THE SEAL TO OPEN</span>
+                    <span class="w-6 h-[1px] bg-zinc-300"></span>
+                </p>
+            </div>
+        </div>
+
+        <!-- MAIN INVITATION CONTENT -->
+        <div id="main-content" class="custom-scroll flex-1 overflow-y-auto bg-burgundy opacity-0 transition-opacity duration-1000">
+            
+            <!-- SECTION 1 -->
+            <section class="min-h-[85vh] flex flex-col items-center justify-center px-6 pt-16 pb-10 text-center relative">
+                <div class="absolute inset-6 border border-gold/30 rounded-3xl pointer-events-none flex flex-col justify-between p-3">
+                    <div class="flex justify-between text-gold/40 text-xs"><span>✦</span><span>✦</span></div>
+                    <div class="flex justify-between text-gold/40 text-xs"><span>✦</span><span>✦</span></div>
+                </div>
+
+                <p class="font-cinzel text-[10px] md:text-xs tracking-[0.3em] text-gold/90 uppercase mb-4" data-i18n="invite_title">
+                    We Joyfully Invite You To Our Wedding
+                </p>
+
+                <h1 class="font-script text-6xl md:text-7xl text-cream my-2 drop-shadow-md">
+                    Omar <span class="text-gold font-serif text-4xl">&</span> Wafaa
+                </h1>
+
+                <div class="w-16 h-[1px] bg-gradient-to-r from-transparent via-gold to-transparent my-6"></div>
+
+                <div class="w-full max-w-xs my-4">
+                    <div class="relative bg-cream p-3 pb-6 rounded shadow-2xl polaroid-shadow transform -rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <div class="relative h-56 w-full overflow-hidden rounded bg-zinc-900">
+                            <img id="polaroid-img" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80" alt="Omar and Wafaa" class="w-full h-full object-cover transition-opacity duration-500">
+                            
+                            <button onclick="prevPhoto()" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-cream text-xs flex items-center justify-center">❮</button>
+                            <button onclick="nextPhoto()" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-cream text-xs flex items-center justify-center">❯</button>
+                        </div>
+                        <div class="mt-3 flex justify-between items-center px-1">
+                            <span class="font-script text-zinc-800 text-xl" data-i18n="forever">Forever & Always</span>
+                            <span class="font-cinzel text-zinc-500 text-[10px] tracking-widest">12/18/2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="font-cinzel text-xs tracking-[0.2em] text-goldLight mt-6 uppercase" data-i18n="venue_name">
+                    Al-Mushir Tantawi Mosque
+                </p>
+                <p class="font-sans text-[10px] tracking-widest text-cream/70 uppercase mt-1" data-i18n="venue_city">
+                    Cairo, Egypt
+                </p>
+
+                <div class="absolute bottom-8 animate-bounce text-gold/60 text-xs">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </section>
+
+            <!-- SECTION 2: COUNTDOWN -->
+            <section class="py-12 px-6 bg-burgundy-dark/60 text-center relative border-y border-gold/15">
+                <h2 class="font-script text-4xl text-cream mb-1" data-i18n="countdown_heading">Countdown</h2>
+                <p class="font-serif italic text-xs text-gold/80 mb-8" data-i18n="countdown_sub">To the most special day of our lives</p>
+
+                <div class="grid grid-cols-4 gap-2 max-w-xs mx-auto">
+                    <div class="gold-border p-3 rounded-xl bg-burgundy/80">
+                        <span id="timer-days" class="font-cinzel text-2xl font-bold text-cream block">00</span>
+                        <span class="font-sans text-[9px] tracking-widest text-gold uppercase mt-1 block" data-i18n="days">Days</span>
+                    </div>
+                    <div class="gold-border p-3 rounded-xl bg-burgundy/80">
+                        <span id="timer-hours" class="font-cinzel text-2xl font-bold text-cream block">00</span>
+                        <span class="font-sans text-[9px] tracking-widest text-gold uppercase mt-1 block" data-i18n="hours">Hours</span>
+                    </div>
+                    <div class="gold-border p-3 rounded-xl bg-burgundy/80">
+                        <span id="timer-mins" class="font-cinzel text-2xl font-bold text-cream block">00</span>
+                        <span class="font-sans text-[9px] tracking-widest text-gold uppercase mt-1 block" data-i18n="mins">Mins</span>
+                    </div>
+                    <div class="gold-border p-3 rounded-xl bg-burgundy/80">
+                        <span id="timer-secs" class="font-cinzel text-2xl font-bold text-cream block">00</span>
+                        <span class="font-sans text-[9px] tracking-widest text-gold uppercase mt-1 block" data-i18n="secs">Secs</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: VENUE -->
+            <section class="py-14 px-6 text-center">
+                <p class="font-cinzel text-xs tracking-[0.25em] text-gold uppercase mb-2" data-i18n="hall_name">The Fath hall</p>
+                <h2 class="font-serif text-3xl text-cream mb-1" data-i18n="venue_name">Al-Mushir Tantawi Mosque</h2>
+                <p class="font-sans text-xs text-cream/70 mb-6" data-i18n="venue_full">The Fath hall, Al-Mushir Tantawi Mosque, Cairo, Egypt</p>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="https://maps.google.com/?q=Al-Mushir+Tantawi+Mosque+Cairo, Egypt" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-full border border-gold bg-gold/10 text-gold font-cinzel text-[11px] tracking-widest hover:bg-gold hover:text-burgundy-dark transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-location-dot"></i> <span data-i18n="directions">GET DIRECTIONS</span>
+                    </a>
+                    <button onclick="addToCalendar()" class="px-6 py-3 rounded-full border border-cream/30 bg-white/5 text-cream font-cinzel text-[11px] tracking-widest hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-calendar-plus"></i> <span data-i18n="calendar">ADD TO CALENDAR</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- SECTION 4: TIMELINE -->
+            <section class="py-14 px-6 bg-burgundy-dark/40 border-t border-gold/15">
+                <div class="text-center mb-10">
+                    <h2 class="font-script text-5xl text-cream" data-i18n="timeline_heading">Wedding Day</h2>
+                    <p class="font-cinzel text-xs text-gold tracking-widest mt-1">DECEMBER 18, 2026</p>
+                </div>
+
+                <div id="timeline-box" class="relative max-w-xs mx-auto border-l border-gold/30 pl-6 space-y-8">
+                    <div class="relative group">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-burgundy border-2 border-gold flex items-center justify-center">
+                            <div class="w-1.5 h-1.5 rounded-full bg-gold"></div>
+                        </div>
+                        <span class="font-cinzel text-xl font-bold text-gold">16:00</span>
+                        <h3 class="font-serif text-lg text-cream tracking-wide mt-0.5" data-i18n="t1_title">CEREMONY</h3>
+                        <p class="font-sans text-xs text-cream/70 leading-relaxed mt-1" data-i18n="t1_desc">
+                            Vows, rings, and the moment we say yes.
+                        </p>
+                    </div>
+
+                    <div class="relative group">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-burgundy border-2 border-gold flex items-center justify-center">
+                            <div class="w-1.5 h-1.5 rounded-full bg-gold"></div>
+                        </div>
+                        <span class="font-cinzel text-xl font-bold text-gold">16:15</span>
+                        <h3 class="font-serif text-lg text-cream tracking-wide mt-0.5" data-i18n="t2_title">MARRIAGE CONTRACT</h3>
+                        <p class="font-sans text-xs text-cream/70 leading-relaxed mt-1" data-i18n="t2_desc">
+                            The legal binding of our love, taking photos.
+                        </p>
+                    </div>
+
+                    <div class="relative group">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-burgundy border-2 border-gold flex items-center justify-center">
+                            <div class="w-1.5 h-1.5 rounded-full bg-gold"></div>
+                        </div>
+                        <span class="font-cinzel text-xl font-bold text-gold">17:15</span>
+                        <h3 class="font-serif text-lg text-cream tracking-wide mt-0.5" data-i18n="t3_title">END EVENT</h3>
+                        <p class="font-sans text-xs text-cream/70 leading-relaxed mt-1" data-i18n="t3_desc">
+                            A heartfelt farewell, hugs, and the start of our new journey together.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: STORY -->
+            <section class="py-14 px-6 text-center">
+                <h2 class="font-script text-5xl text-cream" data-i18n="story_heading">Our Love Story</h2>
+                <p class="font-serif italic text-xs text-gold/80 mb-10" data-i18n="story_sub">How it all began</p>
+
+                <div class="space-y-8 max-w-xs mx-auto text-center">
+                    <div class="gold-border p-5 rounded-2xl bg-burgundy-dark/60">
+                        <p class="font-cinzel text-xs text-gold font-semibold tracking-wider">July 26, 2025</p>
+                        <h3 class="font-serif text-lg text-cream my-1" data-i18n="s1_title">THE DAY WE MET</h3>
+                        <p class="font-sans text-xs text-cream/70 leading-relaxed" data-i18n="s1_desc">
+                            A chance encounter at a job's gathering, and our worlds collided in the most magical way.
+                        </p>
+                    </div>
+
+                    <div class="gold-border p-5 rounded-2xl bg-burgundy-dark/60">
+                        <p class="font-cinzel text-xs text-gold font-semibold tracking-wider">September 20, 2025</p>
+                        <h3 class="font-serif text-lg text-cream my-1" data-i18n="s2_title">SAYING "I LOVE YOU & THE PROPOSAL"</h3>
+                        <p class="font-sans text-xs text-cream/70 leading-relaxed" data-i18n="s2_desc">
+                            Midnight on Cairo's rooftop, surrounded by fireworks. It felt perfect, just right.
+                        </p>
+                    </div>
+
+                    <div class="gold-border p-5 rounded-2xl bg-burgundy-dark/60">
+                        <p class="font-cinzel text-xs text-gold font-semibold tracking-wider">February 14, 2026</p>
+                        <h3 class="font-serif text-lg text-cream my-1" data-i18n="s3_title">THE ENGAGEMENT</h3>
+                        <p class="font-sans text-xs text-cream/70 leading-relaxed" data-i18n="s3_desc">
+                            An evening walk, our favorite bench, shaky hands, and an instant yes.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: FAQ -->
+            <section class="py-14 px-6 bg-burgundy-dark/40 border-t border-gold/15">
+                <div class="text-center mb-8">
+                    <h2 class="font-serif text-2xl text-cream" data-i18n="faq_heading">Questions & Answers</h2>
+                    <p class="font-serif italic text-xs text-gold/80" data-i18n="faq_sub">Good to Know</p>
+                </div>
+
+                <div class="max-w-xs mx-auto space-y-3">
+                    <div class="border border-gold/25 rounded-xl bg-burgundy/60 overflow-hidden">
+                        <button onclick="toggleAccordion(1)" class="w-full p-4 text-left flex justify-between items-center font-sans text-xs text-cream font-medium">
+                            <span data-i18n="q1">Is parking available at the mosque?</span>
+                            <i id="acc-icon-1" class="fa-solid fa-chevron-down text-gold text-[10px] transition-transform"></i>
+                        </button>
+                        <div id="acc-content-1" class="accordion-content px-4 pb-4 font-sans text-xs text-cream/70" data-i18n="a1">
+                            Yes, the parking is available for all guests.
+                        </div>
+                    </div>
+                    <div class="border border-gold/25 rounded-xl bg-burgundy/60 overflow-hidden">
+                        <button onclick="toggleAccordion(4)" class="w-full p-4 text-left flex justify-between items-center font-sans text-xs text-cream font-medium">
+                            <span data-i18n="q2">Can I bring a plus-one?</span>
+                            <i id="acc-icon-4" class="fa-solid fa-chevron-down text-gold text-[10px] transition-transform"></i>
+                        </button>
+                        <div id="acc-content-4" class="accordion-content px-4 pb-4 font-sans text-xs text-cream/70" data-i18n="a2">
+                            Due to venue capacity, plus-ones are strictly limited to those specified on your formal invitation envelope.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: WISHES -->
+            <section class="py-14 px-6 text-center">
+                <h2 class="font-script text-5xl text-cream mb-1" data-i18n="wishes_heading">Send Your Wishes</h2>
+                <p class="font-cinzel text-[10px] tracking-widest text-gold mb-8" data-i18n="wishes_sub">LEAVE A WISH FOR THE COUPLE ✨</p>
+
+                <form onsubmit="handleWish(event)" class="max-w-xs mx-auto space-y-4 text-left mb-8">
+                    <div>
+                        <label class="block font-sans text-[10px] text-cream/80 uppercase tracking-widest mb-1" data-i18n="label_name">Your Name</label>
+                        <input type="text" id="wish-name" required placeholder="e.g. Ahmed & Family" class="w-full px-4 py-2.5 rounded-xl bg-burgundy-dark/80 border border-gold/30 text-cream placeholder-cream/30 text-xs focus:outline-none focus:border-gold">
+                    </div>
+
+                    <div>
+                        <label class="block font-sans text-[10px] text-cream/80 uppercase tracking-widest mb-1" data-i18n="label_wish">Your Congratulations / Wish</label>
+                        <textarea id="wish-text" required rows="3" placeholder="Write your heartfelt wishes here..." class="w-full px-4 py-2.5 rounded-xl bg-burgundy-dark/80 border border-gold/30 text-cream placeholder-cream/30 text-xs focus:outline-none focus:border-gold resize-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-full bg-gradient-to-r from-gold via-goldLight to-gold text-burgundy-dark font-cinzel font-bold text-xs tracking-widest hover:opacity-90 transition-opacity shadow-lg" data-i18n="btn_send">
+                        SEND WISH 💌
+                    </button>
+                </form>
+
+                <div class="max-w-xs mx-auto text-left">
+                    <h3 class="font-cinzel text-xs tracking-widest text-gold uppercase mb-3 text-center" data-i18n="recent_wishes">Recent Wishes</h3>
+                    <div id="wishes-container" class="space-y-3 max-h-60 overflow-y-auto pr-1">
+                        <div class="p-3 rounded-xl bg-burgundy-dark/50 border border-gold/25 text-xs">
+                            <p class="font-cinzel font-bold text-gold">Sarah & Mahmoud</p>
+                            <p class="font-sans text-cream/80 mt-1" data-i18n="sample_wish">Mabrouk! Wishing you a lifetime of love and happiness together! 💍✨</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16 mb-6">
+                    <p class="font-script text-3xl text-gold">Omar & Wafaa</p>
+                    <p class="font-sans text-[9px] tracking-widest text-cream/50 uppercase mt-1" data-i18n="footer_sub">We can't wait to celebrate with you!</p>
+                </div>
+            </section>
+        </div>
+
+        <div id="toast" class="absolute bottom-6 inset-x-6 z-50 bg-gold text-burgundy-dark font-cinzel text-xs font-semibold py-3 px-4 rounded-xl shadow-2xl text-center pointer-events-none opacity-0" data-i18n="toast_msg">
+            Thank you! Your wish has been added to the guestbook. ✨
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const translations = {
+            en: {
+                env_sub: "Your guests won't just open the invitation,<br>they'll experience it 🥹💍",
+                env_tap: "TAP THE SEAL TO OPEN",
+                wedding: "Wedding",
+                invite_title: "We Joyfully Invite You To Our Wedding",
+                forever: "Forever & Always",
+                venue_name: "Al-Mushir Tantawi Mosque",
+                venue_city: "Cairo, Egypt",
+                countdown_heading: "Countdown",
+                countdown_sub: "To the most special day of our lives",
+                days: "Days",
+                hours: "Hours",
+                mins: "Mins",
+                secs: "Secs",
+                hall_name: "The Fath hall",
+                venue_full: "The Fath hall, Al-Mushir Tantawi Mosque, Cairo, Egypt",
+                directions: "GET DIRECTIONS",
+                calendar: "ADD TO CALENDAR",
+                timeline_heading: "Wedding Day",
+                t1_title: "CEREMONY",
+                t1_desc: "Vows, rings, and the moment we say yes.",
+                t2_title: "MARRIAGE CONTRACT",
+                t2_desc: "The legal binding of our love, taking photos.",
+                t3_title: "END EVENT",
+                t3_desc: "A heartfelt farewell, hugs, and the start of our new journey together.",
+                story_heading: "Our Love Story",
+                story_sub: "How it all began",
+                s1_title: "THE DAY WE MET",
+                s1_desc: "A chance encounter at a job's gathering, and our worlds collided in the most magical way.",
+                s2_title: "SAYING 'I LOVE YOU & THE PROPOSAL'",
+                s2_desc: "Midnight on Cairo's rooftop, surrounded by fireworks. It felt perfect, just right.",
+                s3_title: "THE ENGAGEMENT",
+                s3_desc: "An evening walk, our favorite bench, shaky hands, and an instant yes.",
+                faq_heading: "Questions & Answers",
+                faq_sub: "Good to Know",
+                q1: "Is parking available at the mosque?",
+                a1: "Yes, the parking is available for all guests.",
+                q2: "Can I bring a plus-one?",
+                a2: "Due to venue capacity, plus-ones are strictly limited to those specified on your formal invitation envelope.",
+                wishes_heading: "Send Your Wishes",
+                wishes_sub: "LEAVE A WISH FOR THE COUPLE ✨",
+                label_name: "Your Name",
+                label_wish: "Your Congratulations / Wish",
+                btn_send: "SEND WISH 💌",
+                recent_wishes: "Recent Wishes",
+                sample_wish: "Mabrouk! Wishing you a lifetime of love and happiness together! 💍✨",
+                footer_sub: "We can't wait to celebrate with you!",
+                toast_msg: "Thank you! Your wish has been added to the guestbook. ✨"
+            },
+            ar: {
+                env_sub: "لن تفتح دعوة زفافك فحسب،<br>بل ستعيش تجربتها بكل لحظة 🥹💍",
+                env_tap: "اضغط على الختم للفتح",
+                wedding: "حفل زفاف",
+                invite_title: "يسرنا دعوتكم لحضور حفل زفافنا",
+                forever: "دائماً وأبداً",
+                venue_name: "مسجد المشير طنطاوي",
+                venue_city: "القاهرة، مصر",
+                countdown_heading: "العد التنازلي",
+                countdown_sub: "لليوم الأهم في حياتنا",
+                days: "يوم",
+                hours: "ساعة",
+                mins: "دقيقة",
+                secs: "ثانية",
+                hall_name: "قاعة الفتاح",
+                venue_full: "قاعة الفتاح، مسجد المشير طنطاوي، القاهرة، مصر",
+                directions: "الاتجاهات والخريطة",
+                calendar: "إضافة التقويم",
+                timeline_heading: "برنامج الحفل",
+                t1_title: "مراسيم الحفل",
+                t1_desc: "استقبال الحضور والبدء في أجواء الفرح.",
+                t2_title: "عقد القران والتهاني",
+                t2_desc: "اللحظة المباركة لعقد القران والتقاط الصور التذكارية.",
+                t3_title: "ختام الحفل",
+                t3_desc: "نهاية الحفل المبارك، وتمنياتنا لكم بدوام السعادة.",
+                story_heading: "قصة حبنا",
+                story_sub: "كيف بدأت حكايتنا",
+                s1_title: "يوم اللقاء الأول",
+                s1_desc: "لقاء صدفة في تجمع عمل، ومنذ تلك اللحظة تلاقت قلوبنا.",
+                s2_title: "البداية والاعتراف",
+                s2_desc: "منتصف الليل تحت سماء القاهرة، كانت اللحظة الأنسب لنبدأ وعدنا.",
+                s3_title: "الخطوبة الرسمية",
+                s3_desc: "يوم توجنا حبنا برسمية تامة، وبداية طريقنا المشترك.",
+                faq_heading: "الأسئلة الشائعة",
+                faq_sub: "معلومات تهمك",
+                q1: "هل تتوفر مواقف سيارات في المسجد؟",
+                a1: "نعم، تتوفر مواقف مخصصة للسيارات لجميع الضيوف.",
+                q2: "هل يمكنني اصطحاب مرافق إضافي؟",
+                a2: "نظراً لسعة القاعة، الدعوة خاصة للأفراد المذكورين في بطاقة الدعوة.",
+                wishes_heading: "سجل التهاني",
+                wishes_sub: "اترك أمنية أو تهنئة للعروسين ✨",
+                label_name: "الاسم الكريم",
+                label_wish: "رسالة التهنئة أو الأمنية",
+                btn_send: "إرسال التهنئة 💌",
+                recent_wishes: "أحدث التهاني",
+                sample_wish: "الف مبروك! نتمنى لكم حياة مليئة بالحب والسعادة الدائمة 💍✨",
+                footer_sub: "ننتظر تشريفكم بفارغ الصبر!",
+                toast_msg: "شكراً لك! تم إضافة تهنئتك بنجاح إلى سجل التهاني. ✨"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const htmlRoot = document.getElementById('html-root');
+            const langBtnText = document.getElementById('lang-btn-text');
+            const timelineBox = document.getElementById('timeline-box');
+
+            if (currentLang === 'ar') {
+                htmlRoot.setAttribute('dir', 'rtl');
+                htmlRoot.setAttribute('lang', 'ar');
+                langBtnText.innerText = 'English';
+                if(timelineBox) timelineBox.className = "relative max-w-xs mx-auto border-r border-gold/30 pr-6 space-y-8";
+            } else {
+                htmlRoot.setAttribute('dir', 'ltr');
+                htmlRoot.setAttribute('lang', 'en');
+                langBtnText.innerText = 'العربية';
+                if(timelineBox) timelineBox.className = "relative max-w-xs mx-auto border-l border-gold/30 pl-6 space-y-8";
+            }
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.innerHTML = translations[currentLang][key];
+                }
+            });
+
+            const nameInput = document.getElementById('wish-name');
+            const textInput = document.getElementById('wish-text');
+            if (nameInput) nameInput.placeholder = currentLang === 'ar' ? 'مثال: أحمد وعائلته' : 'e.g. Ahmed & Family';
+            if (textInput) textInput.placeholder = currentLang === 'ar' ? 'اكتب تهنئتك القلبية هنا...' : 'Write your heartfelt wishes here...';
+        }
+
+        const photos = [
+            "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80"
+        ];
+        let currentPhotoIdx = 0;
+
+        function nextPhoto() {
+            currentPhotoIdx = (currentPhotoIdx + 1) % photos.length;
+            updatePhoto();
+        }
+
+        function prevPhoto() {
+            currentPhotoIdx = (currentPhotoIdx - 1 + photos.length) % photos.length;
+            updatePhoto();
+        }
+
+        function updatePhoto() {
+            const img = document.getElementById('polaroid-img');
+            if(img) {
+                img.style.opacity = '0';
+                setTimeout(() => {
+                    img.src = photos[currentPhotoIdx];
+                    img.style.opacity = '1';
+                }, 250);
+            }
+        }
+
+        function openEnvelope() {
+            const envelopeScreen = document.getElementById('envelope-screen');
+            const mainContent = document.getElementById('main-content');
+            const floatingControls = document.getElementById('floating-controls');
+            const topFlap = document.getElementById('top-flap');
+            const innerPeek = document.getElementById('inner-card-peek');
+
+            if(topFlap) topFlap.style.transform = 'rotateX(180deg)';
+
+            setTimeout(() => {
+                if(innerPeek) innerPeek.style.transform = 'translateY(-120px) scale(1.05)';
+            }, 300);
+
+            setTimeout(() => {
+                if(envelopeScreen) {
+                    envelopeScreen.style.opacity = '0';
+                    envelopeScreen.style.pointerEvents = 'none';
+                }
+                if(mainContent) mainContent.style.opacity = '1';
+                if(floatingControls) {
+                    floatingControls.style.opacity = '1';
+                    floatingControls.classList.remove('pointer-events-none');
+                }
+                startAudio();
+            }, 900);
+        }
+
+        const targetDate = new Date('December 18, 2026 14:30:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                const dEl = document.getElementById('timer-days');
+                const hEl = document.getElementById('timer-hours');
+                const mEl = document.getElementById('timer-mins');
+                const sEl = document.getElementById('timer-secs');
+
+                if(dEl) dEl.innerText = String(days).padStart(2, '0');
+                if(hEl) hEl.innerText = String(hours).padStart(2, '0');
+                if(mEl) mEl.innerText = String(minutes).padStart(2, '0');
+                if(sEl) sEl.innerText = String(seconds).padStart(2, '0');
+            }
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(`acc-content-${id}`);
+            const icon = document.getElementById(`acc-icon-${id}`);
+            if(!content) return;
+            const isOpen = content.classList.contains('open');
+
+            document.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('open'));
+            document.querySelectorAll('[id^="acc-icon-"]').forEach(el => el.style.transform = 'rotate(0deg)');
+
+            if (!isOpen) {
+                content.classList.add('open');
+                if(icon) icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function addToCalendar() {
+            const title = "Omar & Wafaa's Wedding";
+            const details = "Join us to celebrate the wedding of Omar and Wafaa at Al-Mushir Tantawi Mosque, Cairo!";
+            const location = "Al-Mushir Tantawi Mosque, Cairo, Egypt";
+            const startDate = "20261218T143000Z";
+            const endDate = "20261218T230000Z";
+
+            const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${title}\nDESCRIPTION:${details}\nLOCATION:${location}\nDTSTART:${startDate}\nDTEND:${endDate}\nEND:VEVENT\nEND:VCALENDAR`;
+            
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'omar-wafaa-wedding.ics');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function handleWish(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('wish-name');
+            const textInput = document.getElementById('wish-text');
+            const wishesContainer = document.getElementById('wishes-container');
+
+            if(!nameInput || !textInput || !wishesContainer) return;
+
+            const name = nameInput.value;
+            const text = textInput.value;
+
+            const wishCard = document.createElement('div');
+            wishCard.className = 'p-3 rounded-xl bg-burgundy-dark/50 border border-gold/25 text-xs';
+            wishCard.innerHTML = `
+                <p class="font-cinzel font-bold text-gold">${escapeHtml(name)}</p>
+                <p class="font-sans text-cream/80 mt-1">${escapeHtml(text)}</p>
+            `;
+
+            wishesContainer.prepend(wishCard);
+
+            const toast = document.getElementById('toast');
+            if(toast) {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3500);
+            }
+
+            event.target.reset();
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        let audioCtx = null;
+        let isPlaying = false;
+        let timerId = null;
+
+        function startAudio() {
+            if (isPlaying) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                isPlaying = true;
+                const icon = document.getElementById('music-icon');
+                if(icon) icon.className = 'fa-solid fa-volume-high text-xs';
+                
+                const chords = [
+                    [261.63, 329.63, 392.00, 493.88],
+                    [220.00, 261.63, 329.63, 392.00],
+                    [174.61, 220.00, 261.63, 329.63]
+                ];
+                let step = 0;
+
+                function playChord() {
+                    if (!isPlaying || !audioCtx) return;
+                    const chord = chords[step % chords.length];
+                    chord.forEach(freq => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                        
+                        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.03, audioCtx.currentTime + 0.8);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 3.8);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 4.0);
+                    });
+                    step++;
+                }
+
+                playChord();
+                timerId = setInterval(playChord, 4000);
+            } catch (e) {
+                console.log("Audio autoplay restricted");
+            }
+        }
+
+        function toggleAudio() {
+            const icon = document.getElementById('music-icon');
+            if (isPlaying) {
+                isPlaying = false;
+                if (timerId) clearInterval(timerId);
+                if (audioCtx) audioCtx.close();
+                if(icon) icon.className = 'fa-solid fa-volume-xmark text-xs';
+            } else {
+                startAudio();
+            }
+        }
+    </script>
+</body>
+</html>
